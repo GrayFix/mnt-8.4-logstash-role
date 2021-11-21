@@ -1,0 +1,30 @@
+---
+- name: Enable Logstash service
+  become: true
+  service:
+    name: logstash
+    state: started
+    enabled: yes
+- name: Configurure Logstash main conf
+  become: true
+  template:
+    src: logstash.yml.j2
+    dest: /etc/logstash/logstash.yml
+    mode: 0644
+  notify: restart Logstash
+- name: Configurure Logstash pipelines
+  become: true
+  template:
+    src: pipelines.yml.j2
+    dest: /etc/logstash/pipelines.yml
+    mode: 0644
+  notify: restart Logstash
+- name: Configurure Logstash pipelines configs
+  become: true
+  template:
+    src: "{{ item }}"
+    dest: /etc/logstash/conf.d/{{ item | basename | regex_replace('\.j2$', '') }}
+    mode: 0644
+  with_fileglob:
+    - ../templates/conf.d/*.j2
+  notify: restart Logstash
