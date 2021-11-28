@@ -1,0 +1,12 @@
+---
+- name: ELK
+  hosts: elk
+  tasks:
+    - name: Get elk stack
+      setup:
+- name: Converge
+  hosts: lgs
+  tasks:
+    - name: "Include logstash-role"
+      include_role:
+        name: "logstash-role"
