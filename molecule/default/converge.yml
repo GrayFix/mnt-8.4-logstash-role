@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: elk
+  roles:
+    - elasticsearch-role
+
+- name: Converge
+  hosts: lgs
+  roles:
+    - logstash-role

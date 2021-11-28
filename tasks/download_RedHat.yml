@@ -3,7 +3,9 @@
   get_url:
     url: "https://artifacts.elastic.co/downloads/logstash/logstash-{{ logstash_version }}-x86_64.rpm"
     dest: "files/logstash-{{ logstash_version }}-x86_64.rpm"
+  timeout: 900
   delegate_to: localhost
+  run_once: True
   register: download_logstash
   until: download_logstash is succeeded
   when: logstash_install_type == 'remote'

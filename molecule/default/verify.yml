@@ -1,0 +1,27 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: lgs
+  gather_facts: false
+  tasks:
+  - name: Get stats of the FS object
+    wait_for:
+      path: /var/log/logstash/logstash-plain.log
+      state: present
+      timeout: 60
+  - name: Check if port 5044 is listening
+    wait_for:
+      port: 5044
+      timeout: 60
+      msg: "Timeout waiting for 5044 to respond"
+  - name: Get logstash out
+    command: timeout 120 ./bin/logstash -e 'input { stdin { } } output { stdout {} }'
+    args:
+      chdir: /usr/share/logstash
+    ignore_errors: yes
+    register: result
+  - name: Check logstash out
+    assert:
+      that: result.stdout.find("[[main]-pipeline-manager] javapipeline - Pipeline started") != -1
+
